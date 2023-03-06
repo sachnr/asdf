@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+EDITOR="swww img"
+
+CUR_DIR=$HOME/Pictures
+
+PREV_LOC_FILE=$HOME/.cache/.rofi_prev_loc
+
+# Read last location, otherwise we default to PWD.
+if [ -f "${PREV_LOC_FILE}" ]; then
+    CUR_DIR=$(cat "${PREV_LOC_FILE}")
+fi
+
+# Handle argument.
+if [ -n "$@" ]; then
+    CUR_DIR="${CUR_DIR}/$@"
+fi
+
+# If argument is no directory.
+if [ -f "${CUR_DIR}" ]; then
+    coproc (
+        ${EDITOR} "${CUR_DIR}" &
+        >/dev/null 2>&1
+    )
+    exit
+fi
+
+# process current dir.
+if [ -n "${CUR_DIR}" ]; then
+    CUR_DIR=$(readlink -e "${CUR_DIR}")
+    echo "${CUR_DIR}" >"${PREV_LOC_FILE}"
+    pushd "${CUR_DIR}" >/dev/null
+fi
+
+echo -e "..\n$(ls "$CUR_DIR")" | while read x; do echo -en "$x\0icon\x1f$CUR_DIR/$x\n"; done

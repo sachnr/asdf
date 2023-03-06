@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+script=./rofi-modi
+theme=./wallpaper.rasi
+PREV_LOC_FILE=$HOME/.cache/.rofi_prev_loc
+
+# remove old cache
+rm -f $PREV_LOC_FILE
+
+rofi_cmd() {
+    rofi -modi "Wallpaper:$script" -show Wallpaper -theme "$theme" $@
+}
+
+rofi_cmd $@
